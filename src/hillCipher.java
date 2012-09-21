@@ -8,8 +8,9 @@ import java.io.*;
 
 public class hillCipher {
 
-	private static final int INPUT_ARRAY_SIZE= 10000;
-	private static final int EOF= -1;
+	private static final int MAX_INPUT_SIZE= 10000;
+	private static final int LINE_LENGTH= 80;
+	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) {
 		Scanner stdin= new Scanner(System.in);
@@ -19,15 +20,28 @@ public class hillCipher {
 				"Please enter the filename of your encryption key.");
 
 		String keyFilename= stdin.next();
+		
+		if (DEBUG) //just to save myself from typing all this over and over
+			keyFilename= "key";
+		
 		File keyFile= new File(keyFilename);
 
 		System.out.println("Please enter the filename of your plaintext.");
 
 		String plaintextFilename= stdin.next();
+		
+		if (DEBUG)
+			plaintextFilename= "in";
+		
+		File plaintextFile = new File(plaintextFilename);
 
 		System.out.println("Please enter the desired filename of your ciphertext.");
 
 		String outputFilename= stdin.next();
+		
+		if (DEBUG)
+			outputFilename= "out";
+		
 		File outputFile = new File(outputFilename);
 
 		//Begin reading files. Start with the key. Handle errors here.
@@ -54,28 +68,54 @@ public class hillCipher {
 			System.exit(1);
 		}
 
-		//Read in plaintext. Read it char by char, putting everything to lowercase.
-		char plaintext[]= new char[INPUT_ARRAY_SIZE];
-		
-		try {
-			FileReader plaintextStream = new FileReader(plaintextFilename);
-			
-			char currentChar=0;
-			int i= 0;
-			
-			//-1 is very "magic numbery," mostly because it is, but it's the EOF char.
-			while (currentChar != (char) EOF)
-			{
-				currentChar = (char) plaintextStream.read(); // Cast to a char
-				Character.toLowerCase(currentChar); //make it lowercase for consistency
-				plaintext[i]= currentChar; //add it to the massive array
-				i++; //increment the iterator we're using.
-			}
-		}
-		catch (IOException e)
+		//read in the plaintext to a String. later, we'll parse it out into chars.
+		String plaintextInput= "";
+		try
 		{
+			Scanner plaintextScanner = new Scanner(plaintextFile);
+			
+			//read in tokens from the plaintext until we've exhausted it. just concat for now
+			while (plaintextScanner.hasNext() == true)
+				plaintextInput+= plaintextScanner.next();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			
 			System.out.println("Error: bad filename for plaintext. Ending program...");
 			System.exit(1);
+		}
+		
+		//make sure the input is not too long.
+		if (plaintextInput.length() > MAX_INPUT_SIZE)
+		{
+			System.out.println("Error: input too large. Ending program...");
+			System.exit(1);
+		}
+		
+		//turn the trimmed and lowered string into a char array. We will now process
+		//this array and put it in a final array.
+		char[] rawPlaintext= plaintextInput.trim().toLowerCase().toCharArray();
+		char[] plaintext= new char[rawPlaintext.length];
+		
+		int j= 0;
+		for (int i= 0; i< rawPlaintext.length; i++)
+		{
+			//strip away all non letters
+			if (rawPlaintext[i] < 'a' || rawPlaintext[i] > 'z')
+				continue;
+			else
+				plaintext[j++]= rawPlaintext[i];
+		}
+		
+		for (int i=0; i<plaintext.length; i++)
+		{
+			for(j=0; j<80; j++)
+			{
+				if (i<plaintext.length)
+					System.out.print(plaintext[i++]);
+			}
+			System.out.println();
 		}
 
 	}
