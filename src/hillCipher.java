@@ -10,6 +10,8 @@ public class hillCipher {
 
 	private static final int INPUT_ARRAY_SIZE= 10000;
 	private static final int EOF= -1;
+	private static final int LINE_LENGTH= 80;
+	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) {
 		Scanner stdin= new Scanner(System.in);
@@ -19,15 +21,26 @@ public class hillCipher {
 				"Please enter the filename of your encryption key.");
 
 		String keyFilename= stdin.next();
+		
+		if (DEBUG) //just to save myself from typing all this over and over
+			keyFilename= "key";
+		
 		File keyFile= new File(keyFilename);
 
 		System.out.println("Please enter the filename of your plaintext.");
 
 		String plaintextFilename= stdin.next();
+		
+		if (DEBUG)
+			plaintextFilename= "in";
 
 		System.out.println("Please enter the desired filename of your ciphertext.");
 
 		String outputFilename= stdin.next();
+		
+		if (DEBUG)
+			outputFilename= "out";
+		
 		File outputFile = new File(outputFilename);
 
 		//Begin reading files. Start with the key. Handle errors here.
@@ -71,9 +84,19 @@ public class hillCipher {
 				plaintext[i]= currentChar; //add it to the massive array
 				i++; //increment the iterator we're using.
 			}
+			
+			for (i= 0; i< plaintext.length; i++)
+			{
+				for (int j=0; j<LINE_LENGTH; j++)
+					System.out.print(plaintext[i]);
+				
+				System.out.println();
+			}
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
+			
 			System.out.println("Error: bad filename for plaintext. Ending program...");
 			System.exit(1);
 		}
