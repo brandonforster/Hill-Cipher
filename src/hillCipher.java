@@ -15,31 +15,39 @@ public class hillCipher {
 	public static void main(String[] args) {
 		Scanner stdin= new Scanner(System.in);
 
-		//Read in filenames. Handle errors later.
-		System.out.println("Please ensure your files are all in this program's directory.\n" +
-				"Please enter the filename of your encryption key.");
+		//Read in filenames. Handle errors later. The DEBUG code is just for me to quickly test.
+		String keyFilename;
+		if (!DEBUG){
+			System.out.println("Please ensure your files are all in this program's directory.\n" +
+					"Please enter the filename of your encryption key.");
 
-		String keyFilename= stdin.next();
-
-		if (DEBUG) //just to save myself from typing all this over and over
+			keyFilename= stdin.next();
+		}
+		else
 			keyFilename= "key";
 
 		File keyFile= new File(keyFilename);
 
-		System.out.println("Please enter the filename of your plaintext.");
+		String plaintextFilename;
+		if (!DEBUG)
+		{
+			System.out.println("Please enter the filename of your plaintext.");
 
-		String plaintextFilename= stdin.next();
-
-		if (DEBUG)
+			plaintextFilename= stdin.next();
+		}
+		else
 			plaintextFilename= "in";
 
 		File plaintextFile = new File(plaintextFilename);
 
-		System.out.println("Please enter the desired filename of your ciphertext.");
+		String outputFilename;
+		if(!DEBUG)
+		{
+			System.out.println("Please enter the desired filename of your ciphertext.");
 
-		String outputFilename= stdin.next();
-
-		if (DEBUG)
+			outputFilename= stdin.next();
+		}
+		else
 			outputFilename= "out";
 
 		int keyRowsCols = 0;
@@ -110,24 +118,24 @@ public class hillCipher {
 
 		//perform the matrix multiplication. store in the ciphertext array
 		//l= letter		r= row		c= column
-		for (int l= 0; l< plaintext.length; l+= keyRowsCols)
+		for (int l= 0; l< j; l+= keyRowsCols)
 		{
 			for (int r=0; r< keyRowsCols; r++)
 			{
 				for (int c=0; c< keyRowsCols; c++)
 				{
 					if ((l+r) < plaintext.length && (l+c) < plaintext.length)
-						ciphertext[l+r]+= (char) ((key[r][c]* (int) plaintext[l+c]));
+					{
+						ciphertext[l+r]+= (char) (key[r][c]* (plaintext[l+c]-'a'));
+					}
 					else
 					{
 						break;
 					}
 				}
 				//mod by 26 and add 'a' to keep it in ascii alphabet
-				//System.out.println("\nciphertext@"+(l+r)+" before mod:\nchar:"+ciphertext[(l+r)]+"     int: "+(int)ciphertext[(l+r)]);
 				ciphertext[(l+r)]= (char) (ciphertext[(l+r)] % 26 + 'a');
-				//System.out.println("\nciphertext@"+(l+r)+" after mod:\nchar:"+ciphertext[(l+r)]+"     int: "+(int)ciphertext[(l+r)]);
-			}
+				}
 		}
 		try
 		{
@@ -144,7 +152,7 @@ public class hillCipher {
 				}
 				out.write("\n");
 			}
-			
+
 			out.close();
 		}
 		catch (IOException e)
