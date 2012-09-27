@@ -28,6 +28,7 @@ public class hillCipher {
 
 		File keyFile= new File(keyFilename);
 
+		//plaintext
 		String plaintextFilename;
 		if (!DEBUG)
 		{
@@ -40,6 +41,7 @@ public class hillCipher {
 
 		File plaintextFile = new File(plaintextFilename);
 
+		//output
 		String outputFilename;
 		if(!DEBUG)
 		{
@@ -50,6 +52,7 @@ public class hillCipher {
 		else
 			outputFilename= "out";
 
+		//the "n" value of the key matrix. determines how many rows and columns there are.
 		int keyRowsCols = 0;
 		int[][] key= new int[500][500];
 
@@ -110,6 +113,7 @@ public class hillCipher {
 			//strip away all non letters
 			if (rawPlaintext[i] < 'a' || rawPlaintext[i] > 'z')
 				continue;
+			//add letters to the final plaintext array
 			else
 				plaintext[j++]= rawPlaintext[i];
 		}
