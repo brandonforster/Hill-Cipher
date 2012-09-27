@@ -10,7 +10,7 @@ public class hillCipher {
 
 	private static final int MAX_INPUT_SIZE= 10000;
 	private static final int LINE_LENGTH= 80;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
 		Scanner stdin= new Scanner(System.in);
@@ -117,20 +117,24 @@ public class hillCipher {
 		char[] ciphertext= new char[plaintext.length+1];
 
 		//perform the matrix multiplication. store in the ciphertext array
-		//l= letter		r= row		c= column
+		//l= letter		r= row		c= column	j= length of actual plaintext
 		for (int l= 0; l< j; l+= keyRowsCols)
 		{
 			for (int r=0; r< keyRowsCols; r++)
 			{
 				for (int c=0; c< keyRowsCols; c++)
 				{
-					if ((l+r) < plaintext.length && (l+c) < plaintext.length)
+					//this checks for run over in case we run out of plaintext to encode
+					if ((l+c) < j)
 					{
 						ciphertext[l+r]+= (char) (key[r][c]* (plaintext[l+c]-'a'));
 					}
+					
+					//this is the code that is used in case of run out
 					else
 					{
-						ciphertext[l+r]+= (char) (key[r][c]* 'x');
+						//'x'-'a' looks weird, but it's there to be consistent with the way we encode normally
+						ciphertext[l+r]+= (char) (key[r][c]* ('x'-'a'));
 					}
 				}
 				//mod by 26 and add 'a' to keep it in ascii alphabet
@@ -155,6 +159,7 @@ public class hillCipher {
 
 			out.close();
 		}
+		//in case something happened
 		catch (IOException e)
 		{
 			System.out.println("Error writing output. Ending program...");
