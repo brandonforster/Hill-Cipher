@@ -130,7 +130,7 @@ public class hillCipher {
 					}
 					else
 					{
-						break;
+						ciphertext[l+r]+= (char) (key[r][c]* 'x');
 					}
 				}
 				//mod by 26 and add 'a' to keep it in ascii alphabet
@@ -143,7 +143,7 @@ public class hillCipher {
 			BufferedWriter out = new BufferedWriter(fstream);
 
 			//print out the finished product, 80 chars per line.
-			for (int i=0; i<ciphertext.length; i++)
+			for (int i=0; i<ciphertext.length;)
 			{
 				for(j=0; j<LINE_LENGTH; j++)
 				{
