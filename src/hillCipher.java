@@ -43,18 +43,19 @@ public class hillCipher {
 			outputFilename= "out";
 		
 		File outputFile = new File(outputFilename);
-
+		int keyRowsCols = 0;
+		int[][] key= new int[500][500];
+		
 		//Begin reading files. Start with the key. Handle errors here.
 		try {
 			Scanner keyScanner = new Scanner(keyFile);
 
 			//Key matrices are always squares, and here we're reading in
 			//the number of rows and columns.
-			int keyRowsCols= keyScanner.nextInt();
+			keyRowsCols= keyScanner.nextInt();
 
 			//double loop that inputs the key matrix into a 2D array that should exactly
 			//match the input.
-			int key[][]= new int[keyRowsCols][keyRowsCols];
 			for (int i= 0; i < keyRowsCols; i++)
 			{
 				for (int j= 0; j < keyRowsCols; j++)
@@ -108,15 +109,36 @@ public class hillCipher {
 				plaintext[j++]= rawPlaintext[i];
 		}
 		
-		for (int i=0; i<plaintext.length; i++)
+		char[] ciphertext= new char[plaintext.length];
+		
+		//perform the matrix multiplication. store in the ciphertext array
+		//l= letter		r= row		c= column
+		for (int l= 0; l< plaintext.length; l+= keyRowsCols)
 		{
-			for(j=0; j<80; j++)
+			for (int r=0; r< keyRowsCols; r++)
 			{
-				if (i<plaintext.length)
-					System.out.print(plaintext[i++]);
+				for (int c=0; c< keyRowsCols; c++)
+				{
+					ciphertext[l+r]+= (char) ((key[r][c]* (int) plaintext[l+c]));
+					System.out.println("key: "+key[r][c]+
+							"\nr: "+r+"    c: "+c+
+							"\nplaintext: " + plaintext[l+c]+
+							"\nciphertext@"+(l+r)+"="+(int)ciphertext[l+r]);
+				}
+			}
+			//mod by 26 and add 'a' to keep it in ascii alphabet
+			ciphertext[l]= (char) (ciphertext[l] % 26 + 'a');
+		}
+		
+		//print out the finished product, 80 chars per line.
+		for (int i=0; i<ciphertext.length; i++)
+		{
+			for(j=0; j<LINE_LENGTH; j++)
+			{
+				if (i<ciphertext.length)
+					System.out.print(ciphertext[i++]);
 			}
 			System.out.println();
 		}
-
 	}
 }
